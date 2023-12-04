@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta http-equiv="content-type" content="no-cache, must-revalidate"/>
+    <meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57 GMT"/>
+    <title>首页</title>
+
+    <link rel="stylesheet" href="css/my.css">
+    <link href="/front/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/swiper-5.4.5/swiper.min.css" rel="stylesheet">
+
+    <style>
+        .nx-nav-container ul {
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nx-nav-container ul li {
+            display: inline-block;
+            width: 120px;
+            text-align: center;
+            line-height: 45px;
+        }
+
+        .nx-nav-container a {
+            color: #FFFFFF;
+        }
+
+        .nx-nav-container a:hover {
+            color: aquamarine;
+            text-decoration: none;
+        }
+
+        .nx-notice-container li{
+            padding: 10px;
+            border-bottom: 1px dashed #ccc;
+        }
+        .nx-notice-container a{
+            color: slateblue;
+            font-size: 14px;
+        }
+
+        .nx-notice-container a:hover{
+            color: #007aff;
+        }
+
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <!--weather
+    <div style="text-align: right;">
+        <iframe width="700" scrolling="no" height="60" frameborder="0" allowtransparency="true" src="http://i.tianqi.com/index.php?c=code&amp;id=12&amp;icon=1&amp;num=5"></iframe>
+    </div>
+    weather-->
+    <div class="nx-header">
+        <div style="display: flex;width: 100%; height: 30px; line-height: 30px; background-color: #eee;">
+            <div style="flex: 5; padding: 0 10px; color: orangered">
+                欢迎访问 大学新生报到信息管理系统
+            </div>
+            <div v-if="user.name" style="flex: 1">
+                欢迎您：{{user.name}}
+                <a style="margin-left: 30px; color: blue" href="javascript:void(0)" @click="logout">退出</a>
+                <a v-if="isCollect" style="margin-left: 10px" href="collectInfo.html">收藏夹</a>
+            </div>
+        </div>
+    </div>
+    <div style="height: 80px; line-height: 80px;">
+        <div style="margin-left: 20px; position: relative">
+            <img src="img/logo1.png" alt="" style="width: 40px; position: absolute; top: 20px">
+            <b style="margin-left:45px;font-size: 25px; text-shadow: 5px 5px 3px #888888;">大学新生报到信息管理系统</b>
+        </div>
+    </div>
+
+    <div class="nx-nav-container" style="height: 45px; background-color: black">
+        <ul>
+            <li class="active"><a href="index.html">首页</a></li>
+            <li><a href="advertiserInfo.html" >公告信息</a></li>
+			<li><a href="submitInfo.html">信息审核</a></li>
+			<li><a href="jiaofeiInfo.html">在线缴费</a></li>
+			<li><a href="yikatongInfo.html">一卡通申请</a></li>
+			<li><a href="zhidaoInfo.html">新生指导</a></li>
+
+            <li v-if="isShow"><a href="/end/page/index.html" target="_blank">进入后台系统</a></li>
+            <li><a href="/end/page/login.html" target="_blank">登录</a></li>
+            <li><a href="/end/page/register.html" target="_blank">注册</a></li>
+        </ul>
+    </div>
+
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/3.jpg" alt=""></div>
+            <div class="swiper-slide"><img class="carousel-img" src="/front/img/carousel/4.jpg" alt=""></div>
+        </div>
+        <!-- 如果需要分页器 -->
+        <div class="swiper-pagination"></div>
+
+        <!-- 如果需要导航按钮 -->
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+    </div>
+    <!-- /. 轮播图-->
+
+    <div style="margin-top: 5px; display: flex">
+        <div style="width: 20%; margin: 0 10px; height: 300px; border: 1px solid #ccc">
+            <div style="height: 40px; background-color: #ccc">
+                <div style="width: 150px; height: 40px; margin-left: 10px; font-size: 20px; line-height: 40px; text-align: center; color: white; background-color: red">
+                    <b>系统公告</b>
+                </div>
+            </div>
+
+            <div class="nx-notice-container">
+                <ul>
+                </ul>
+            </div>
+        </div>
+
+        <div style="width: 60%; height: 300px; border: 1px solid #ddd">
+            <div style="height: 40px; background-color: #eee;">
+                <div style="width: 150px; height: 40px; margin-left: 10px; font-size: 20px; line-height: 40px; text-align: center; color: white; background-color: red">
+                    <b>关于我们</b>
+                </div>
+                <div style="padding: 10px; line-height: 30px; font-size: 14px">
+                    <p>
+                        云南农业大学普洱校区坐落在“世界茶源”、“中国咖啡之都”的普洱市，是依托热区、面向全国、辐射东南亚，主要培养热区现代特色农业、康养旅游、民族文化传承与创新等应用型人才的特色学院。校区现占地1372亩，有教职工270余人，其中在职在编教师161人，其中高级职称49人，硕士及以上学历101人，硕士生导师6人、省级教学名师3人、云南现代农业产业体系岗位专家1人、云南高原特色产业促进会专家团顾问2人。普洱校区结合云南热带生态农业研究院建设还将引进10名院士、100名博士、100名教授。
+                    </p>
+                    <p>
+                        普洱校区——热带作物学院始终坚持服务热区经济社会发展和区域产业经济建设，建设高水平应用型学院的办学定位，励精图治，人才培养质量不断提高，为学生成长成才和地方经济社会建设以及产业发展做出了积极贡献，赢得了社会各界的广泛赞誉，被誉为“云南热区人才的摇篮”。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 20%; height: 300px; margin: 0 10px;  border: 1px solid #ccc">
+            <div style="height: 40px; background-color: #ccc">
+                <div style="width: 150px; height: 40px; margin-left: 10px; font-size: 20px; line-height: 40px; text-align: center; color: white; background-color: red">
+                    <b>联系方式</b>
+                </div>
+                <div style="padding: 10px; line-height: 30px; font-size: 14px">
+                    <p>联系电话：0879-2201617</p>
+                    <p>地址：云南省普洱市思茅区思亭路3号</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--js库文件-->
+<script src="js/jquery-1.10.2.js"></script>
+<script src="js/swiper-5.4.5/swiper.min.js"></script>
+<script src="js/vue2.6.11/vue.min.js"></script>
+<script src="js/vue2.6.11/axios.js"></script>
+
+<script>
+    $(function () {
+
+        var mySwiper = new Swiper('.swiper-container', {
+            // direction: 'vertical', // 垂直切换选项
+            autoplay: {
+                delay: 5000,
+                disableOnInteraction: false
+            },//可选选项，自动滑动
+            loop: true, // 循环模式选项
+            speed: 2000,
+
+            // 如果需要分页器
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true
+            },
+
+            // 如果需要前进后退按钮
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            }
+        });
+
+        // 鼠标移入停止自动滚动
+        var $swiperSide = $('.swiper-slide');
+        $swiperSide.mouseenter(function () {
+            mySwiper.autoplay.stop();
+        });
+        // 鼠标移出开始自动滚动
+        $swiperSide.mouseleave(function () {
+            mySwiper.autoplay.start();
+        });
+    });
+
+    new Vue({
+        el: '#wrapper',
+        data: {
+            user: {},
+            isShow: false,
+            isCollect: false
+        },
+        created: function () {
+            axios.get('/auth').then(res => {
+                if (res.data.code === '0') {
+                    this.user = res.data.data;
+                    if (this.user.level === 1) {
+                        this.isShow = true;
+                    } else {
+                        axios.get('/submitInfo/check').then(res => {
+                            if (res.data.code === '0') {
+                                let list = res.data.data;
+                                list.forEach(item => {
+                                    if (item.userName === this.user.name) {
+                                        this.isShow = true;
+                                    }
+                                })
+                            }
+                        });
+                    }
+
+                }
+            });
+
+            $.get('/advertiserInfo/page/all?pageSize=10', function (res) {
+                let $box = $('.nx-notice-container ul');
+                $box.empty();
+                let n = 6;
+                if (res.code === '0') {
+                    let list = res.data.list;
+                    for (let i = 1; i <= n; i++) {
+                        let data = list[i - 1];
+                        let $item = $('<li><a href="advertiserInfo.html?id=' + data.id + '">' + data.name + '</a></li>');
+                        $box.append($item);
+                    }
+                } else {
+                    alert("后台服务异常")
+                }
+            })
+        },
+        methods: {
+            logout() {
+                axios.get("/logout").then(res => {
+                    if(res.data.code === '0') {
+                        location.href = '/front/index.html';
+                    } else {
+                        msg('error', res.data.msg);
+                    }
+                })
+            }
+        }
+    })
+
+</script>
+</body>
+</html>
