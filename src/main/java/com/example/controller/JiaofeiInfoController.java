@@ -1,5 +1,4 @@
 package com.example.controller;
-
 import com.example.common.Result;
 import com.example.entity.Account;
 import com.example.entity.JiaofeiInfo;
@@ -10,7 +9,6 @@ import com.example.service.JiaofeiInfoService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;

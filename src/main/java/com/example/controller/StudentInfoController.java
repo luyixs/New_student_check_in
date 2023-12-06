@@ -12,17 +12,10 @@ import com.example.common.ResultCode;
 import com.example.entity.StudentInfo;
 import com.example.service.StudentInfoService;
 import com.example.exception.CustomException;
-import com.example.common.ResultCode;
 import com.example.vo.StudentInfoVo;
-
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.example.service.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Value;
-import cn.hutool.core.util.StrUtil;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -71,9 +64,9 @@ public class StudentInfoController {
 
     @GetMapping("/page/{name}")
     public Result<PageInfo<StudentInfoVo>> page(@PathVariable String name,
-                                                @RequestParam(defaultValue = "1") Integer pageNum,
-                                                @RequestParam(defaultValue = "5") Integer pageSize,
-                                                HttpServletRequest request) {
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "5") Integer pageSize,
+            HttpServletRequest request) {
         return Result.success(studentInfoService.findPage(name, pageNum, pageSize, request));
     }
 
@@ -86,17 +79,19 @@ public class StudentInfoController {
     }
 
     /**
-    * 批量通过excel添加信息
-    * @param file excel文件
-    * @throws IOException
-    */
+     * 批量通过excel添加信息
+     * 
+     * @param file excel文件
+     * @throws IOException
+     */
     @PostMapping("/upload")
     public Result upload(MultipartFile file) throws IOException {
 
         List<StudentInfo> infoList = ExcelUtil.getReader(file.getInputStream()).readAll(StudentInfo.class);
         if (!CollectionUtil.isEmpty(infoList)) {
             // 处理一下空数据
-            List<StudentInfo> resultList = infoList.stream().filter(x -> ObjectUtil.isNotEmpty(x.getName())).collect(Collectors.toList());
+            List<StudentInfo> resultList = infoList.stream().filter(x -> ObjectUtil.isNotEmpty(x.getName()))
+                    .collect(Collectors.toList());
             for (StudentInfo info : resultList) {
                 studentInfoService.add(info);
             }
@@ -108,17 +103,17 @@ public class StudentInfoController {
     public void getExcelModel(HttpServletResponse response) throws IOException {
         // 1. 生成excel
         Map<String, Object> row = new LinkedHashMap<>();
-		row.put("name", "张天志");
-		row.put("password", "123456");
-		row.put("nickName", "老张");
-		row.put("sex", "男");
-		row.put("age", 22);
-		row.put("birthday", "TIME");
-		row.put("phone", "18843232356");
-		row.put("address", "上海市");
-		row.put("email", "aa@163.com");
-		row.put("account", "");
-		row.put("level", 2);
+        row.put("name", "张天志");
+        row.put("password", "123456");
+        row.put("nickName", "老张");
+        row.put("sex", "男");
+        row.put("age", 22);
+        row.put("birthday", "TIME");
+        row.put("phone", "18843232356");
+        row.put("address", "上海市");
+        row.put("email", "aa@163.com");
+        row.put("account", "");
+        row.put("level", 2);
 
         List<Map<String, Object>> list = CollUtil.newArrayList(row);
 
@@ -127,7 +122,7 @@ public class StudentInfoController {
         writer.write(list, true);
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-        response.setHeader("Content-Disposition","attachment;filename=studentInfoModel.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=studentInfoModel.xlsx");
 
         ServletOutputStream out = response.getOutputStream();
         writer.flush(out, true);

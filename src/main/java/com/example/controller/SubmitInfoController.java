@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.example.common.Result;
 import com.example.entity.Account;
 import com.example.exception.CustomException;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/submitInfo")
@@ -35,7 +33,7 @@ public class SubmitInfoController {
         }
         info.setUserName(user.getName());
         info.setLevel(user.getLevel());
-		info.setUploadUserId(user.getId());
+        info.setUploadUserId(user.getId());
 
         // 状态设置为未提交
         info.setStatus("未提交");
@@ -89,8 +87,8 @@ public class SubmitInfoController {
 
     @GetMapping("/page")
     public Result<PageInfo<SubmitInfoVo>> page(@RequestParam(defaultValue = "1") Integer pageNum,
-                                                @RequestParam(defaultValue = "5") Integer pageSize,
-                                                HttpServletRequest request) {
+            @RequestParam(defaultValue = "5") Integer pageSize,
+            HttpServletRequest request) {
         return Result.success(submitInfoService.findPage(pageNum, pageSize, request));
     }
 

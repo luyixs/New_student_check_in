@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONArray;
@@ -12,20 +11,15 @@ import com.example.entity.AuthorityInfo;
 import com.example.exception.CustomException;
 import com.example.entity.AdminInfo;
 import com.example.entity.StudentInfo;
-
 import com.example.service.AdminInfoService;
 import com.example.service.StudentInfoService;
-
 import com.example.service.SubmitInfoService;
-import com.example.vo.SubmitInfoVo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import cn.hutool.json.JSONUtil;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,28 +29,28 @@ public class AccountController {
     @Value("${authority.info}")
     private String authorityStr;
 
-	@Resource
-	private AdminInfoService adminInfoService;
-	@Resource
-	private StudentInfoService studentInfoService;
-	@Resource
+    @Resource
+    private AdminInfoService adminInfoService;
+    @Resource
+    private StudentInfoService studentInfoService;
+    @Resource
     private SubmitInfoService submitInfoService;
-
 
     @PostMapping("/login")
     public Result<Account> login(@RequestBody Account account, HttpServletRequest request) {
-        if (StrUtil.isBlank(account.getName()) || StrUtil.isBlank(account.getPassword()) || account.getLevel() == null) {
+        if (StrUtil.isBlank(account.getName()) || StrUtil.isBlank(account.getPassword())
+                || account.getLevel() == null) {
             throw new CustomException(ResultCode.PARAM_LOST_ERROR);
         }
         Integer level = account.getLevel();
 
         Account login = new Account();
-		if (1 == level) {
-			login = adminInfoService.login(account.getName(), account.getPassword());
-		}
-		if (2 == level) {
-			login = studentInfoService.login(account.getName(), account.getPassword());
-		}
+        if (1 == level) {
+            login = adminInfoService.login(account.getName(), account.getPassword());
+        }
+        if (2 == level) {
+            login = studentInfoService.login(account.getName(), account.getPassword());
+        }
 
         request.getSession().setAttribute("user", login);
         return Result.success(login);
@@ -66,18 +60,18 @@ public class AccountController {
     public Result<Account> register(@RequestBody Account account) {
         Integer level = account.getLevel();
         Account login = new Account();
-		if (1 == level) {
-			AdminInfo info = new AdminInfo();
-			BeanUtils.copyProperties(account, info);
-			info.setAccount(0D);
-			login = adminInfoService.add(info);
-		}
-		if (2 == level) {
-			StudentInfo info = new StudentInfo();
-			BeanUtils.copyProperties(account, info);
+        if (1 == level) {
+            AdminInfo info = new AdminInfo();
+            BeanUtils.copyProperties(account, info);
             info.setAccount(0D);
-			login = studentInfoService.add(info);
-		}
+            login = adminInfoService.add(info);
+        }
+        if (2 == level) {
+            StudentInfo info = new StudentInfo();
+            BeanUtils.copyProperties(account, info);
+            info.setAccount(0D);
+            login = studentInfoService.add(info);
+        }
 
         return Result.success(login);
     }
@@ -91,7 +85,7 @@ public class AccountController {
     @GetMapping("/auth")
     public Result getAuth(HttpServletRequest request) {
         Object user = request.getSession().getAttribute("user");
-        if(user == null) {
+        if (user == null) {
             return Result.error("401", "未登录");
         }
         return Result.success(user);
@@ -104,12 +98,12 @@ public class AccountController {
             return Result.success(new Object());
         }
         Integer level = account.getLevel();
-		if (1 == level) {
-			return Result.success(adminInfoService.findById(account.getId()));
-		}
-		if (2 == level) {
-			return Result.success(studentInfoService.findById(account.getId()));
-		}
+        if (1 == level) {
+            return Result.success(adminInfoService.findById(account.getId()));
+        }
+        if (2 == level) {
+            return Result.success(studentInfoService.findById(account.getId()));
+        }
 
         return Result.success(new Object());
     }
@@ -132,10 +126,11 @@ public class AccountController {
     }
 
     /**
-    * 获取当前用户所能看到的模块信息
-    * @param request
-    * @return
-    */
+     * 获取当前用户所能看到的模块信息
+     * 
+     * @param request
+     * @return
+     */
     @GetMapping("/authority")
     public Result<List<Integer>> getAuthorityInfo(HttpServletRequest request) {
         Account user = (Account) request.getSession().getAttribute("user");
@@ -150,7 +145,7 @@ public class AccountController {
                 List<Integer> modelIdList = array.stream().map((o -> {
                     JSONObject obj = (JSONObject) o;
                     return obj.getInt("modelId");
-                    })).collect(Collectors.toList());
+                })).collect(Collectors.toList());
                 return Result.success(modelIdList);
             }
         }
@@ -164,9 +159,11 @@ public class AccountController {
         if (user == null) {
             return Result.success(new ArrayList<>());
         }
-        Optional<AuthorityInfo> optional = authorityInfoList.stream().filter(x -> x.getLevel().equals(user.getLevel())).findFirst();
+        Optional<AuthorityInfo> optional = authorityInfoList.stream().filter(x -> x.getLevel().equals(user.getLevel()))
+                .findFirst();
         if (optional.isPresent()) {
-            Optional<AuthorityInfo.Model> firstOption = optional.get().getModels().stream().filter(x -> x.getModelId().equals(modelId)).findFirst();
+            Optional<AuthorityInfo.Model> firstOption = optional.get().getModels().stream()
+                    .filter(x -> x.getModelId().equals(modelId)).findFirst();
             if (firstOption.isPresent()) {
                 List<Integer> info = firstOption.get().getOperation();
                 return Result.success(info);
@@ -187,16 +184,16 @@ public class AccountController {
         }
         info.setPassword(SecureUtil.md5(info.getNewPassword()));
         Integer level = account.getLevel();
-		if (1 == level) {
-			AdminInfo adminInfo = new AdminInfo();
-			BeanUtils.copyProperties(info, adminInfo);
-			adminInfoService.update(adminInfo);
-		}
-		if (2 == level) {
-			StudentInfo studentInfo = new StudentInfo();
-			BeanUtils.copyProperties(info, studentInfo);
-			studentInfoService.update(studentInfo);
-		}
+        if (1 == level) {
+            AdminInfo adminInfo = new AdminInfo();
+            BeanUtils.copyProperties(info, adminInfo);
+            adminInfoService.update(adminInfo);
+        }
+        if (2 == level) {
+            StudentInfo studentInfo = new StudentInfo();
+            BeanUtils.copyProperties(info, studentInfo);
+            studentInfoService.update(studentInfo);
+        }
 
         info.setLevel(level);
         info.setName(account.getName());
@@ -208,22 +205,22 @@ public class AccountController {
     @PostMapping("/resetPassword")
     public Result resetPassword(@RequestBody Account account) {
         Integer level = account.getLevel();
-		if (1 == level) {
-			AdminInfo info = adminInfoService.findByUserName(account.getName());
-			if (info == null) {
-				return Result.error(ResultCode.USER_NOT_EXIST_ERROR.code, ResultCode.USER_NOT_EXIST_ERROR.msg);
-			}
-			info.setPassword(SecureUtil.md5("123456"));
-			adminInfoService.update(info);
-		}
-		if (2 == level) {
-			StudentInfo info = studentInfoService.findByUserName(account.getName());
-			if (info == null) {
-				return Result.error(ResultCode.USER_NOT_EXIST_ERROR.code, ResultCode.USER_NOT_EXIST_ERROR.msg);
-			}
-			info.setPassword(SecureUtil.md5("123456"));
-			studentInfoService.update(info);
-		}
+        if (1 == level) {
+            AdminInfo info = adminInfoService.findByUserName(account.getName());
+            if (info == null) {
+                return Result.error(ResultCode.USER_NOT_EXIST_ERROR.code, ResultCode.USER_NOT_EXIST_ERROR.msg);
+            }
+            info.setPassword(SecureUtil.md5("123456"));
+            adminInfoService.update(info);
+        }
+        if (2 == level) {
+            StudentInfo info = studentInfoService.findByUserName(account.getName());
+            if (info == null) {
+                return Result.error(ResultCode.USER_NOT_EXIST_ERROR.code, ResultCode.USER_NOT_EXIST_ERROR.msg);
+            }
+            info.setPassword(SecureUtil.md5("123456"));
+            studentInfoService.update(info);
+        }
 
         return Result.success();
     }

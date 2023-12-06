@@ -9,7 +9,6 @@ import com.github.pagehelper.PageInfo;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,12 +33,13 @@ public class NxSystemFileController {
     public Result upload(MultipartFile file, HttpServletRequest request) throws IOException {
         String originName = file.getOriginalFilename();
         // 1. 先查询有没有相同名称的文件
-//        NxSystemFileInfo fileInfo = nxSystemFileInfoService.findByFileName(name);
-//        if (fileInfo != null) {
-//            throw new CustomException("1001", "文件名：\"" + name + "\"已存在");
-//        }
+        // NxSystemFileInfo fileInfo = nxSystemFileInfoService.findByFileName(name);
+        // if (fileInfo != null) {
+        // throw new CustomException("1001", "文件名：\"" + name + "\"已存在");
+        // }
         // 文件名加个时间戳
-        String fileName = FileUtil.mainName(originName) + System.currentTimeMillis() + "." + FileUtil.extName(originName);
+        String fileName = FileUtil.mainName(originName) + System.currentTimeMillis() + "."
+                + FileUtil.extName(originName);
 
         // 2. 文件上传
         FileUtil.writeBytes(file.getBytes(), BASE_PATH + fileName);
@@ -60,7 +60,8 @@ public class NxSystemFileController {
     public Result<Map<String, String>> noticeUpload(MultipartFile file, HttpServletRequest request) throws IOException {
         String originName = file.getOriginalFilename();
         // 文件名加个时间戳
-        String fileName = FileUtil.mainName(originName) + System.currentTimeMillis() + "." + FileUtil.extName(originName);
+        String fileName = FileUtil.mainName(originName) + System.currentTimeMillis() + "."
+                + FileUtil.extName(originName);
         // 2. 缩小尺寸
         FileUtil.mkdir(BASE_PATH);
         Thumbnails.of(file.getInputStream()).width(400).toFile(BASE_PATH + fileName);
@@ -79,8 +80,8 @@ public class NxSystemFileController {
 
     @GetMapping("/page/{name}")
     public Result<PageInfo<NxSystemFileInfo>> filePage(@PathVariable String name,
-                                                       @RequestParam(defaultValue = "1") Integer pageNum,
-                                                       @RequestParam(defaultValue = "10") Integer pageSize) {
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
 
         PageInfo<NxSystemFileInfo> pageInfo = nxSystemFileInfoService.findPage(name, pageNum, pageSize);
         return Result.success(pageInfo);
@@ -98,7 +99,8 @@ public class NxSystemFileController {
         byte[] bytes = FileUtil.readBytes(BASE_PATH + nxSystemFileInfo.getFileName());
         response.reset();
         // 设置response的Header
-        response.addHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(nxSystemFileInfo.getOriginName(), "UTF-8"));
+        response.addHeader("Content-Disposition",
+                "attachment;filename=" + URLEncoder.encode(nxSystemFileInfo.getOriginName(), "UTF-8"));
         response.addHeader("Content-Length", "" + bytes.length);
         OutputStream toClient = new BufferedOutputStream(response.getOutputStream());
         response.setContentType("application/octet-stream");

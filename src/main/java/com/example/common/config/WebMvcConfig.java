@@ -5,9 +5,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 描述:
- * 作者： xq
- * 日期： 2020/5/8 13:28
+ * 本代码的主要作用是为Spring MVC应用配置CORS策略，允许来自任何来源、使用任何方法、带有任何列出的请求头的跨域请求，并允许带有用户凭证的请求。
  **/
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
