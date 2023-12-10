@@ -1,5 +1,10 @@
 package com.example.common;
-
+/*
+ * 这个Result类的主要作用是对API或函数调用的返回结果进行封装。
+ * 它包含一个泛型字段data用于存储返回的具体数据，以及两个字段code和msg分别用于存储结果的状态码和状态信息。
+ * 这个类提供了一些静态工厂方法，如success()、success(T data)、error()、error(String code, String msg)等，以方便创建不同类型的Result对象。
+ * 同时，这个类也提供了相应的getter和setter方法，以便于外部代码获取和设置Result对象的状态和数据。
+ */
 public class Result<T> {
     private String code;
     private String msg;

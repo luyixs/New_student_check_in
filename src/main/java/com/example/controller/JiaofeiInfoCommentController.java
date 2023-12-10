@@ -4,11 +4,8 @@ import com.example.common.Result;
 import com.example.entity.JiaofeiInfoComment;
 import com.example.vo.JiaofeiInfoCommentVo;
 import com.example.service.JiaofeiInfoCommentService;
-
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -50,14 +47,14 @@ public class JiaofeiInfoCommentController {
 
     @GetMapping("/page/{name}")
     public Result<PageInfo<JiaofeiInfoCommentVo>> page(@PathVariable String name,
-                                                @RequestParam(defaultValue = "1") Integer pageNum,
-                                                @RequestParam(defaultValue = "5") Integer pageSize,
-                                                HttpServletRequest request) {
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "5") Integer pageSize,
+            HttpServletRequest request) {
         return Result.success(jiaofeiInfoCommentService.findPage(name, pageNum, pageSize));
     }
 
     @GetMapping("/findByForeignId/{id}")
-    public Result<List<JiaofeiInfoCommentVo>> findByForeignId (@PathVariable Long id) {
+    public Result<List<JiaofeiInfoCommentVo>> findByForeignId(@PathVariable Long id) {
         return Result.success(jiaofeiInfoCommentService.findByForeignId(id));
     }
 }

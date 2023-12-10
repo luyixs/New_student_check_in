@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,54 +17,55 @@ import java.util.stream.Collectors;
 @RequestMapping("/echarts")
 public class EchartsController {
 
-	@Resource
-	private AdminInfoService adminInfoService;
-	@Resource
-	private StudentInfoService studentInfoService;
-	@Resource
-	private SusheInfoService susheInfoService;
-
+    @Resource
+    private AdminInfoService adminInfoService;
+    @Resource
+    private StudentInfoService studentInfoService;
+    @Resource
+    private SusheInfoService susheInfoService;
 
     @GetMapping("/get/{modelName}")
     Result<List<EchartsData>> getEchartsData(@PathVariable String modelName) {
         List<EchartsData> list = new ArrayList<>();
         switch (modelName) {
-			case "adminInfo":
-				List<AdminInfoVo> adminInfoList = adminInfoService.findAll();
-				List<AdminInfo> adminInfoMaleList = adminInfoList.stream().filter(x -> "男".equals(x.getSex())).collect(Collectors.toList());
-				Map<String, Integer> adminInfoMap = new HashMap<>(2);
-				adminInfoMap.put("男", adminInfoMaleList.size());
-				adminInfoMap.put("女", adminInfoList.size() - adminInfoMaleList.size());
-				getPieData("管理员", list, adminInfoMap);
-				getBarData("管理员", list, adminInfoMap);
+            case "adminInfo":
+                List<AdminInfoVo> adminInfoList = adminInfoService.findAll();
+                List<AdminInfo> adminInfoMaleList = adminInfoList.stream().filter(x -> "男".equals(x.getSex()))
+                        .collect(Collectors.toList());
+                Map<String, Integer> adminInfoMap = new HashMap<>(2);
+                adminInfoMap.put("男", adminInfoMaleList.size());
+                adminInfoMap.put("女", adminInfoList.size() - adminInfoMaleList.size());
+                getPieData("管理员", list, adminInfoMap);
+                getBarData("管理员", list, adminInfoMap);
 
-				break;
-			case "studentInfo":
-				List<StudentInfoVo> studentInfoList = studentInfoService.findAll();
-				List<StudentInfo> studentInfoMaleList = studentInfoList.stream().filter(x -> "男".equals(x.getSex())).collect(Collectors.toList());
-				Map<String, Integer> studentInfoMap = new HashMap<>(2);
-				studentInfoMap.put("男", studentInfoMaleList.size());
-				studentInfoMap.put("女", studentInfoList.size() - studentInfoMaleList.size());
-				getPieData("学生", list, studentInfoMap);
-				getBarData("学生", list, studentInfoMap);
+                break;
+            case "studentInfo":
+                List<StudentInfoVo> studentInfoList = studentInfoService.findAll();
+                List<StudentInfo> studentInfoMaleList = studentInfoList.stream().filter(x -> "男".equals(x.getSex()))
+                        .collect(Collectors.toList());
+                Map<String, Integer> studentInfoMap = new HashMap<>(2);
+                studentInfoMap.put("男", studentInfoMaleList.size());
+                studentInfoMap.put("女", studentInfoList.size() - studentInfoMaleList.size());
+                getPieData("学生", list, studentInfoMap);
+                getBarData("学生", list, studentInfoMap);
 
-				break;
+                break;
 
-			case "susheInfo":
-				List<SusheInfoVo> susheInfoList = susheInfoService.findAll();
-				Map<String, Integer> susheInfoMap = new HashMap<>(2);
-				for (SusheInfo susheInfo : susheInfoList) {
-					Integer value = susheInfoMap.get(susheInfo.getName());
-					if (value != null && value != 0) {
-						susheInfoMap.put(susheInfo.getName(), value + 1);
-					} else {
-						susheInfoMap.put(susheInfo.getName(), 1);
-					}
-				}
-				getPieData("宿舍", list, susheInfoMap);
-				getBarData("宿舍", list, susheInfoMap);
+            case "susheInfo":
+                List<SusheInfoVo> susheInfoList = susheInfoService.findAll();
+                Map<String, Integer> susheInfoMap = new HashMap<>(2);
+                for (SusheInfo susheInfo : susheInfoList) {
+                    Integer value = susheInfoMap.get(susheInfo.getName());
+                    if (value != null && value != 0) {
+                        susheInfoMap.put(susheInfo.getName(), value + 1);
+                    } else {
+                        susheInfoMap.put(susheInfo.getName(), 1);
+                    }
+                }
+                getPieData("宿舍", list, susheInfoMap);
+                getBarData("宿舍", list, susheInfoMap);
 
-				break;
+                break;
 
             default:
                 break;
@@ -74,21 +74,21 @@ public class EchartsController {
     }
 
     @GetMapping("/options")
-        Result<List<Map<String, String>>> getOptions() {
+    Result<List<Map<String, String>>> getOptions() {
         List<Map<String, String>> options = new ArrayList<>();
 
-		Map<String, String> optionMap1 = new HashMap<>();
-		optionMap1.put("value", "adminInfo");
-		optionMap1.put("label", "管理员信息");
-		options.add(optionMap1);
-		Map<String, String> optionMap2 = new HashMap<>();
-		optionMap2.put("value", "studentInfo");
-		optionMap2.put("label", "学生信息");
-		options.add(optionMap2);
-		Map<String, String> optionMap3 = new HashMap<>();
-		optionMap3.put("value", "susheInfo");
-		optionMap3.put("label", "宿舍信息");
-		options.add(optionMap3);
+        Map<String, String> optionMap1 = new HashMap<>();
+        optionMap1.put("value", "adminInfo");
+        optionMap1.put("label", "管理员信息");
+        options.add(optionMap1);
+        Map<String, String> optionMap2 = new HashMap<>();
+        optionMap2.put("value", "studentInfo");
+        optionMap2.put("label", "学生信息");
+        options.add(optionMap2);
+        Map<String, String> optionMap3 = new HashMap<>();
+        optionMap3.put("value", "susheInfo");
+        optionMap3.put("label", "宿舍信息");
+        options.add(optionMap3);
 
         return Result.success(options);
     }
@@ -135,7 +135,7 @@ public class EchartsController {
 
         List<Object> seriesObjs = new ArrayList<>();
         List<Object> xAxisObjs = new ArrayList<>();
-            for (String key : dataMap.keySet()) {
+        for (String key : dataMap.keySet()) {
             Integer value = dataMap.get(key);
             xAxisObjs.add(key);
             seriesObjs.add(value);

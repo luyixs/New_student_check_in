@@ -12,17 +12,10 @@ import com.example.common.ResultCode;
 import com.example.entity.AdminInfo;
 import com.example.service.AdminInfoService;
 import com.example.exception.CustomException;
-import com.example.common.ResultCode;
 import com.example.vo.AdminInfoVo;
-
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.example.service.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Value;
-import cn.hutool.core.util.StrUtil;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -71,9 +64,9 @@ public class AdminInfoController {
 
     @GetMapping("/page/{name}")
     public Result<PageInfo<AdminInfoVo>> page(@PathVariable String name,
-                                                @RequestParam(defaultValue = "1") Integer pageNum,
-                                                @RequestParam(defaultValue = "5") Integer pageSize,
-                                                HttpServletRequest request) {
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "5") Integer pageSize,
+            HttpServletRequest request) {
         return Result.success(adminInfoService.findPage(name, pageNum, pageSize, request));
     }
 
@@ -86,17 +79,19 @@ public class AdminInfoController {
     }
 
     /**
-    * 批量通过excel添加信息
-    * @param file excel文件
-    * @throws IOException
-    */
+     * 批量通过excel添加信息
+     * 
+     * @param file excel文件
+     * @throws IOException
+     */
     @PostMapping("/upload")
     public Result upload(MultipartFile file) throws IOException {
 
         List<AdminInfo> infoList = ExcelUtil.getReader(file.getInputStream()).readAll(AdminInfo.class);
         if (!CollectionUtil.isEmpty(infoList)) {
             // 处理一下空数据
-            List<AdminInfo> resultList = infoList.stream().filter(x -> ObjectUtil.isNotEmpty(x.getName())).collect(Collectors.toList());
+            List<AdminInfo> resultList = infoList.stream().filter(x -> ObjectUtil.isNotEmpty(x.getName()))
+                    .collect(Collectors.toList());
             for (AdminInfo info : resultList) {
                 adminInfoService.add(info);
             }
@@ -108,18 +103,18 @@ public class AdminInfoController {
     public void getExcelModel(HttpServletResponse response) throws IOException {
         // 1. 生成excel
         Map<String, Object> row = new LinkedHashMap<>();
-		row.put("name", "admin");
-		row.put("password", "123456");
-		row.put("nickName", "管理员");
-		row.put("sex", "男");
-		row.put("age", 22);
-		row.put("birthday", "TIME");
-		row.put("phone", "18843232356");
-		row.put("address", "上海市");
-		row.put("code", "111");
-		row.put("email", "aa@163.com");
-		row.put("cardId", "342425199001116372");
-		row.put("level", 1);
+        row.put("name", "admin");
+        row.put("password", "123456");
+        row.put("nickName", "管理员");
+        row.put("sex", "男");
+        row.put("age", 22);
+        row.put("birthday", "TIME");
+        row.put("phone", "18843232356");
+        row.put("address", "上海市");
+        row.put("code", "111");
+        row.put("email", "aa@163.com");
+        row.put("cardId", "342425199001116372");
+        row.put("level", 1);
 
         List<Map<String, Object>> list = CollUtil.newArrayList(row);
 
@@ -128,7 +123,7 @@ public class AdminInfoController {
         writer.write(list, true);
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-        response.setHeader("Content-Disposition","attachment;filename=adminInfoModel.xlsx");
+        response.setHeader("Content-Disposition", "attachment;filename=adminInfoModel.xlsx");
 
         ServletOutputStream out = response.getOutputStream();
         writer.flush(out, true);
